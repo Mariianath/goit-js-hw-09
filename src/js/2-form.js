@@ -1,22 +1,32 @@
+const form = document.querySelector('.feedback-form');
+const STORAGE_KEY = 'feedback-form-state';
 
-const form = document.getElementById('contact-form');
+const formData = { email: '', message: '' };
 
 
-form.addEventListener('submit', function (event) {
+const savedData = localStorage.getItem(STORAGE_KEY);
+if (savedData) {
+  Object.assign(formData, JSON.parse(savedData));
+  form.email.value = formData.email || '';
+  form.message.value = formData.message || '';
+}
+
+
+form.addEventListener('input', event => {
+  formData[event.target.name] = event.target.value.trim();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+});
+
+
+form.addEventListener('submit', event => {
   event.preventDefault();
-
-  const email = form.email.value;
-  const message = form.message.value;
-
-
-  if (!email || !message) {
-    alert('Please fill out all fields.');
+  if (!formData.email || !formData.message) {
+    alert('Fill please all fields');
     return;
   }
-
-
-  console.log('Email:', email);
-  console.log('Message:', message);
-
-  alert('Form submitted successfully!');
+  console.log(formData);
+  localStorage.removeItem(STORAGE_KEY);
+  event.target.reset();
+  formData.email = '';
+  formData.message = '';
 });
